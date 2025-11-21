@@ -1,6 +1,8 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Shop.APIIdentity.Dto.Auth;
+using Shop.APIIdentity.Services;
 
 namespace Shop.APIIdentity.Controllers
 {
@@ -10,10 +12,12 @@ namespace Shop.APIIdentity.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
+        private IAuthService _authService;
 
-        public AuthController(UserManager<IdentityUser> userManager)
+        public AuthController(UserManager<IdentityUser> userManager, IAuthService authService)
         {
             _userManager = userManager;
+            _authService = authService;
         }
 
         [HttpPost("register")]
@@ -29,18 +33,18 @@ namespace Shop.APIIdentity.Controllers
             return Ok(user);
         }
 
-        //[HttpPost("login")]
-        //public async Task<IActionResult<UserResponse>> Login(User u)
-        //{
-        //    // Login logic goes here
-        //    var userExists = await _userManager.FindByNameAsync
-        //    if (userExists == null)
-        //    {
-        //        return Unauthorized("Invalid username or password.");
-        //    }
-        //    return Ok("User logged in successfully.");
-        //}
-        
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(UserRequest request)
+        {
+            var response = await _authService.Login(request.Username, request.Password);
+            if (response == null)
+            {
+                return Unauthorized("Invalid username or password.");
+            }
+
+            return Ok(response);
+        }
+
 
         public class UserRequest
         {
