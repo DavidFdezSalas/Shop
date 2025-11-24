@@ -5,4 +5,5 @@
   <Project Path="Shop.APIGateway/Shop.APIGateway.csproj" />
   <Project Path="Shop.APIIdentity/Shop.APIIdentity.csproj" />
   <Project Path="Shop.Host/Shop.Host.csproj" />
+  <Project Path="Shop.ServiceDefaults/Shop.ServiceDefaults.csproj" Id="5dc1c37f-2687-4787-a3f3-6f15f715a8b5" />
 </Solution>

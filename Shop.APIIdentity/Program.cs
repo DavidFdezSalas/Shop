@@ -5,9 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Shop.APIIdentity.Data;
 using Shop.APIIdentity.Services;
+using Shop.ServiceDefaults;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddServiceDefaults();
 
 builder.Configuration.AddUserSecrets(typeof(Program).Assembly, true);
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -114,5 +117,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapDefaultEndpoints();
 
 app.Run();

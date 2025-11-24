@@ -1,6 +1,9 @@
 using Shop.APIGateway.Extensions;
+using Shop.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddServiceDefaults();
 
 // Add services to the container.
 
@@ -28,5 +31,7 @@ app.UseAuthorization();
 app.MapReverseProxy();
 
 app.MapControllers();
+
+app.MapDefaultEndpoints();
 
 app.Run();

@@ -25,13 +25,21 @@ namespace Shop.APIIdentity.Services
             var user = await _userManager.FindByNameAsync(username);
             if (user == null)
             {
-                return null;
+                return new ResponseLogin
+                {
+                    Success = false,
+                    ErrorMessage = "User not found."
+                };
             }
 
             var result = await _userManager.CheckPasswordAsync(user, password);
             if (!result)
             {
-                return null;
+                return new ResponseLogin
+                {
+                    Success = false,
+                    ErrorMessage = "Invalid credentials."
+                };
             }
 
             // Claims
@@ -39,16 +47,16 @@ namespace Shop.APIIdentity.Services
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                new Claim(JwtRegisteredClaimNames.Name, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Name, user.UserName!),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email!),
                 new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? "NoRole")
             };
 
             // Generate JWT Token
-            var secretKey = _configuration["JwtSettings:Key"];
+            var secretKey = _configuration["JwtSettings:Key"]!;
             var audience = _configuration["JwtSettings:Audience"];
             var issuer = _configuration["JwtSettings:Issuer"];
-            var expirationMinutes = int.Parse(_configuration["JwtSettings:ExpiryInMinutes"]);
+            var expirationMinutes = int.Parse(_configuration["JwtSettings:ExpiryInMinutes"]!);
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

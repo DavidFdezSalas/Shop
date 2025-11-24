@@ -11,12 +11,10 @@ namespace Shop.APIIdentity.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
         private IAuthService _authService;
 
-        public AuthController(UserManager<IdentityUser> userManager, IAuthService authService)
+        public AuthController(IAuthService authService)
         {
-            _userManager = userManager;
             _authService = authService;
         }
 
