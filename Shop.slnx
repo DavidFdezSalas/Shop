@@ -2,6 +2,7 @@
   <Folder Name="/Elementos de la solución/">
     <File Path="Directory.Packages.props" />
   </Folder>
+  <Project Path="Shop.APIGateway/Shop.APIGateway.csproj" />
   <Project Path="Shop.APIIdentity/Shop.APIIdentity.csproj" />
   <Project Path="Shop.Host/Shop.Host.csproj" />
 </Solution>

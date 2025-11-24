@@ -23,13 +23,7 @@ namespace Shop.APIIdentity.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserRequest request)
         {
-            var user = new IdentityUser
-            {
-                UserName = request.Username,
-                PasswordHash = request.Password
-            };
-
-            var result = await _userManager.CreateAsync(user);
+            var user = await _authService.Register(request.Username, request.Password);
             return Ok(user);
         }
 

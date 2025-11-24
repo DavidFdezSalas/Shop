@@ -1,0 +1,6 @@
+@Shop.APIGateway_HostAddress = http://localhost:5103
+
+GET {{Shop.APIGateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
