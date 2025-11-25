@@ -21,6 +21,8 @@ var identity1 = builder.AddProject<Projects.Shop_APIIdentity>("shop-apiidentity1
 
 builder.AddProject<Projects.Shop_APIGateway>("shop-apigateway")
     .WithReference(identity1)
-    .WaitFor(identity1);
+    .WaitFor(identity1)
+    .WithReference(redis)
+    .WaitFor(redis);
 
 builder.Build().Run();
