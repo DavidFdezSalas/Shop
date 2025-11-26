@@ -12,6 +12,11 @@ var redis = builder.AddRedis("redis")
     .WithLifetime(ContainerLifetime.Persistent)
     .WithRedisInsight();
 
+var rabbitmq = builder.AddRabbitMQ("rabbitmq")
+    .WithDataVolume(isReadOnly: false)
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithManagementPlugin();
+
 var postgresdb = postgres.AddDatabase("postgresdb");
 
 var identity1 = builder.AddProject<Projects.Shop_APIIdentity>("shop-apiidentity1")
