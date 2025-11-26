@@ -5,7 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Shop.APIIdentity.Services
+namespace Shop.APIIdentity.Services.Auth
 {
     public class AuthService : IAuthService
     {
@@ -60,11 +60,14 @@ namespace Shop.APIIdentity.Services
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var expirationTime = DateTime.UtcNow.AddMinutes(expirationMinutes);
+
 
             var token = new JwtSecurityToken(
                 issuer: issuer,
                 audience: audience,
-                expires: DateTime.Now.AddMinutes(expirationMinutes),
+                claims: claims,
+                expires: expirationTime,
                 signingCredentials: creds
             );
 
@@ -73,7 +76,7 @@ namespace Shop.APIIdentity.Services
             return new ResponseLogin
             {
                 Token = encryptedToken,
-                ExpirationAt = DateTime.UtcNow.AddMinutes(expirationMinutes)
+                ExpirationAt = expirationTime
             };
 
 

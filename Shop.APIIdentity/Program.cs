@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 using Shop.APIIdentity.Data;
-using Shop.APIIdentity.Services;
+using Shop.APIIdentity.Services.Auth;
+using Shop.APIIdentity.Services.User;
 using Shop.ServiceDefaults;
 using System.Text;
 
@@ -14,6 +16,7 @@ builder.AddServiceDefaults();
 
 builder.Configuration.AddUserSecrets(typeof(Program).Assembly, true);
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Add services to the container.
 
@@ -49,9 +52,12 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 .AddDefaultTokenProviders();
 
 //JWT
-builder.Services.AddAuthentication();
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
         .AddJwtBearer(options =>
         {
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -91,13 +97,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 //})
 //.AddEntityFrameworkStores<ApplicationDbContext>()
 //.AddDefaultTokenProviders();
-
+builder.Services.AddAuthorization();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 
     app.UseSwaggerUI(options =>
     {

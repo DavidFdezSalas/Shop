@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Shop.APIIdentity.Dto.Auth;
 
-namespace Shop.APIIdentity.Services
+namespace Shop.APIIdentity.Services.Auth
 {
     public interface IAuthService
     {
