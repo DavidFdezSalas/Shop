@@ -6,7 +6,7 @@ namespace Shop.APIIdentity.Services.Auth
 {
     public interface IAuthService
     {
-        Task<bool> Register(string username, string password);
-        Task<ResponseLogin> Login(string username, string password);
+        Task<bool> Register(string username, string email, string password);
+        Task<ResponseLogin> Login(string email, string password);
     }
 }

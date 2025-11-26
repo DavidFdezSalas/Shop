@@ -20,9 +20,9 @@ namespace Shop.APIIdentity.Services.Auth
             _configuration = configuration;
         }
 
-        public async Task<ResponseLogin> Login(string username, string password)
+        public async Task<ResponseLogin> Login(string email, string password)
         {
-            var user = await _userManager.FindByNameAsync(username);
+            var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
                 return new ResponseLogin
@@ -75,6 +75,7 @@ namespace Shop.APIIdentity.Services.Auth
 
             return new ResponseLogin
             {
+                Success = true,
                 Token = encryptedToken,
                 ExpirationAt = expirationTime
             };
@@ -82,12 +83,12 @@ namespace Shop.APIIdentity.Services.Auth
 
         }
 
-        public async Task<bool> Register(string username, string password)
+        public async Task<bool> Register(string username, string email, string password)
         {
             var result = await _userManager.CreateAsync(new IdentityUser
             {
-                UserName = username.Split("@")[0],
-                Email = username
+                UserName = username,
+                Email = email
             }, password);
 
             return result.Succeeded;

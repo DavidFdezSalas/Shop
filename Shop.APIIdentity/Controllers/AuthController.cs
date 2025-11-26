@@ -21,17 +21,17 @@ namespace Shop.APIIdentity.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserRequest request)
         {
-            var user = await _authService.Register(request.Username, request.Password);
+            var user = await _authService.Register(request.Username, request.Email, request.Password);
             return Ok(user);
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserRequest request)
+        public async Task<IActionResult> Login(RequestLogin request)
         {
-            var response = await _authService.Login(request.Username, request.Password);
+            var response = await _authService.Login(request.Email, request.Password);
             if (response == null)
             {
-                return Unauthorized("Invalid username or password.");
+                return Unauthorized("Invalid email or password.");
             }
 
             return Ok(response);
@@ -41,6 +41,7 @@ namespace Shop.APIIdentity.Controllers
         public class UserRequest
         {
             public required string Username { get; set; }
+            public required string Email { get; set; }
             public required string Password { get; set; }
         }
 

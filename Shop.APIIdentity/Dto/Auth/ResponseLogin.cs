@@ -7,4 +7,10 @@
         public DateTime? ExpirationAt { get; set; }
         public string? ErrorMessage { get; set; }
     }
+
+    public sealed record RequestLogin
+    {
+        public required string Email { get; set; }
+        public required string Password { get; set; }
+    }
 }

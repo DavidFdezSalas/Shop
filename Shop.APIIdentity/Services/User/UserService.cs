@@ -5,7 +5,7 @@ namespace Shop.APIIdentity.Services.User
     public class UserService : IUserService
     {
         private UserManager<IdentityUser> _userManager;
-        private ILogger<UserService> _logger;
+        private readonly ILogger<UserService> _logger;
 
         public UserService(UserManager<IdentityUser> userManager, ILogger<UserService> logger)
         {
