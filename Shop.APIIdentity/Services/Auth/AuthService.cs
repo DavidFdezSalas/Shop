@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Shop.APIIdentity.Dto.Auth;
-using Shop.Shared;
+using Shop.Shared.Events;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -99,7 +99,7 @@ namespace Shop.APIIdentity.Services.Auth
 
             if (user?.Id != null && user.Email != null)
             {
-                await _publishEndpoint.Publish(new UserCreatedEvents(user.Id, user.Email));
+                await _publishEndpoint.Publish(new UserCreatedEvent(user.Id, user.Email));
             }
 
             return result.Succeeded;
