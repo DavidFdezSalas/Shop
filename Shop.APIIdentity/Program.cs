@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using FluentValidation;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,17 +16,38 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
+// User Secrets
 builder.Configuration.AddUserSecrets(typeof(Program).Assembly, true);
+
+// Servicios personalizados
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
+// Fluent Validation
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 // Add services to the container.
-
 builder.Services.AddControllers();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// Configurar MassTransit con RabbitMQ
+builder.Services.AddMassTransit(options =>
+{
+    options.UsingRabbitMq((context, cfg) =>
+    {
+        var configuracion = context.GetRequiredService<IConfiguration>();
+        var connectionString = configuracion.GetConnectionString("rabbitmq");
+
+        if (!string.IsNullOrEmpty(connectionString))
+        {
+            cfg.Host(new Uri(connectionString));
+        }
+
+        cfg.ConfigureEndpoints(context);
+    });
+});
 
 // Database con Aspire
 builder.AddNpgsqlDbContext<ApplicationDbContext>("postgresdb");

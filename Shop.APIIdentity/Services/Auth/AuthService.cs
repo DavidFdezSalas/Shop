@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using MassTransit;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Shop.APIIdentity.Dto.Auth;
+using Shop.Shared;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -12,12 +14,14 @@ namespace Shop.APIIdentity.Services.Auth
         private UserManager<IdentityUser> _userManager;
         private RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public AuthService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public AuthService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, IPublishEndpoint publishEndpoint)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            _publishEndpoint = publishEndpoint;
         }
 
         public async Task<ResponseLogin> Login(string email, string password)
@@ -90,6 +94,13 @@ namespace Shop.APIIdentity.Services.Auth
                 UserName = username,
                 Email = email
             }, password);
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user?.Id != null && user.Email != null)
+            {
+                await _publishEndpoint.Publish(new UserCreatedEvents(user.Id, user.Email));
+            }
 
             return result.Succeeded;
         }

@@ -1,7 +1,5 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-
-
 var postgres = builder.AddPostgres("postgres")
     .WithDataVolume(isReadOnly: false)
     .WithLifetime(ContainerLifetime.Persistent)
@@ -22,7 +20,8 @@ var postgresdb = postgres.AddDatabase("postgresdb");
 var identity1 = builder.AddProject<Projects.Shop_APIIdentity>("shop-apiidentity1")
     .WaitFor(postgres)
     .WithReference(postgresdb)
-    .WithEnvironment("Version", "1");
+    .WaitFor(rabbitmq)
+    .WithReference(rabbitmq);
 
 builder.AddProject<Projects.Shop_APIGateway>("shop-apigateway")
     .WithReference(identity1)
