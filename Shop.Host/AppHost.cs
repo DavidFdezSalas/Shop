@@ -29,4 +29,8 @@ builder.AddProject<Projects.Shop_APIGateway>("shop-apigateway")
     .WithReference(redis)
     .WaitFor(redis);
 
+builder.AddProject<Projects.Shop_Notifications>("shop-notifications")
+    .WaitFor(rabbitmq)
+    .WithReference(rabbitmq);
+
 builder.Build().Run();
