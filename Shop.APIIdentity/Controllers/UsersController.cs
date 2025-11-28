@@ -23,7 +23,7 @@ namespace Shop.APIIdentity.Controllers
         }
 
         [HttpPatch("{userId}/change-password")]
-        public async Task<ActionResult<PasswordChageResponse>> ChangePassword(String userId, PasswordChageRequest request, IValidator<PasswordChageRequest> validator)
+        public async Task<ActionResult<PasswordChageResponse>> ChangePassword(string userId, PasswordChageRequest request, IValidator<PasswordChageRequest> validator)
         {
             var validationResult = await validator.ValidateAsync(request);
 

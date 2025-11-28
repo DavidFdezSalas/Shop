@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Elementos de la solución/">
     <File Path="Directory.Packages.props" />
+    <File Path="k6-load-test.js" />
   </Folder>
   <Project Path="Shop.APIGateway/Shop.APIGateway.csproj" />
   <Project Path="Shop.APIIdentity/Shop.APIIdentity.csproj" />

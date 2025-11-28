@@ -30,7 +30,7 @@ builder.Services.AddRateLimiter(rateLimiterOptions =>
     _ => new RedisFixedWindowRateLimiterOptions
     {
         ConnectionMultiplexerFactory = () => redis,
-        PermitLimit = 5,
+        PermitLimit = 250,
         Window = TimeSpan.FromMinutes(1)
 
     });
