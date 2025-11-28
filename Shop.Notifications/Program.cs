@@ -1,8 +1,11 @@
 using MassTransit;
 using Shop.Notifications;
+using Shop.ServiceDefaults;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddHostedService<Worker>();
+
+builder.AddServiceDefaults();
 
 builder.Services.AddMassTransit(x =>
 {
