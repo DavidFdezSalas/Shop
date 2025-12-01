@@ -1,11 +1,9 @@
 ﻿using MassTransit;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 using Shop.APIIdentity.Dto.Auth;
 using Shop.Shared.Events;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 
 namespace Shop.APIIdentity.Services.Auth
 {
@@ -13,14 +11,15 @@ namespace Shop.APIIdentity.Services.Auth
     {
         private UserManager<IdentityUser> _userManager;
         private RoleManager<IdentityRole> _roleManager;
-        private readonly IConfiguration _configuration;
+        private readonly ITokenService _tokenService;
         private readonly IPublishEndpoint _publishEndpoint;
 
-        public AuthService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, IPublishEndpoint publishEndpoint)
+
+        public AuthService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, ITokenService tokenService, IPublishEndpoint publishEndpoint)
         {
             _userManager = userManager;
             _roleManager = roleManager;
-            _configuration = configuration;
+            _tokenService = tokenService;
             _publishEndpoint = publishEndpoint;
         }
 
@@ -56,32 +55,13 @@ namespace Shop.APIIdentity.Services.Auth
                 new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? "NoRole")
             };
 
-            // Generate JWT Token
-            var secretKey = _configuration["JwtSettings:Key"]!;
-            var audience = _configuration["JwtSettings:Audience"];
-            var issuer = _configuration["JwtSettings:Issuer"];
-            var expirationMinutes = int.Parse(_configuration["JwtSettings:ExpiryInMinutes"]!);
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expirationTime = DateTime.UtcNow.AddMinutes(expirationMinutes);
-
-
-            var token = new JwtSecurityToken(
-                issuer: issuer,
-                audience: audience,
-                claims: claims,
-                expires: expirationTime,
-                signingCredentials: creds
-            );
-
-            var encryptedToken = new JwtSecurityTokenHandler().WriteToken(token);
+            var tokenResult = _tokenService.GenerateToken(claims);
 
             return new ResponseLogin
             {
                 Success = true,
-                Token = encryptedToken,
-                ExpirationAt = expirationTime
+                Token = tokenResult.Token,
+                ExpirationAt = tokenResult.Expiration
             };
 
 

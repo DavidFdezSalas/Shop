@@ -22,6 +22,7 @@ builder.Configuration.AddUserSecrets(typeof(Program).Assembly, true);
 // Servicios personalizados
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 // Fluent Validation
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();

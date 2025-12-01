@@ -5,6 +5,11 @@ var postgres = builder.AddPostgres("postgres")
     .WithLifetime(ContainerLifetime.Persistent)
     .WithPgAdmin(pgAdmin => pgAdmin.WithHostPort(5050));
 
+var mailServer = builder.AddContainer("maildev", "maildev/maildev:latest")
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithEndpoint(port: 1025, targetPort:1025, name: "smtp")
+    .WithHttpEndpoint(port: 1080, targetPort: 1080, name: "web");
+
 var redis = builder.AddRedis("redis")
     .WithDataVolume(isReadOnly: false)
     .WithLifetime(ContainerLifetime.Persistent)

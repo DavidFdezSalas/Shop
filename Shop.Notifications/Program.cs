@@ -7,6 +7,8 @@ builder.Services.AddHostedService<Worker>();
 
 builder.AddServiceDefaults();
 
+builder.Services.AddSingleton<IEmailService, EmailService>();
+
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<UserRegisteredConsumer>();
