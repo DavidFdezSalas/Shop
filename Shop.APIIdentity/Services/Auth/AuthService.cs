@@ -9,8 +9,8 @@ namespace Shop.APIIdentity.Services.Auth
 {
     public class AuthService : IAuthService
     {
-        private UserManager<IdentityUser> _userManager;
-        private RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ITokenService _tokenService;
         private readonly IPublishEndpoint _publishEndpoint;
 
@@ -69,17 +69,18 @@ namespace Shop.APIIdentity.Services.Auth
 
         public async Task<bool> Register(string username, string email, string password)
         {
-            var result = await _userManager.CreateAsync(new IdentityUser
+            var user = new IdentityUser
             {
                 UserName = username,
                 Email = email
-            }, password);
+            };
 
-            var user = await _userManager.FindByEmailAsync(email);
+            var result = await _userManager.CreateAsync(user, password);
 
-            if (user?.Id != null && user.Email != null)
+            if (result.Succeeded)
             {
-                await _publishEndpoint.Publish(new UserCreatedEvent(user.Id, user.Email));
+                await _userManager.AddToRoleAsync(user, "Customer");
+                await _publishEndpoint.Publish(new UserCreatedEvent(user.Id, user.Email!));
             }
 
             return result.Succeeded;

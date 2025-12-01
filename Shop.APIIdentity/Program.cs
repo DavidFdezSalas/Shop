@@ -134,11 +134,12 @@ if (app.Environment.IsDevelopment())
     {
         options.SwaggerEndpoint("/openapi/v1.json", "v1");
     });
-
+    
     // Migraciones automáticas
     using var scope = app.Services.CreateScope();
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await context.Database.MigrateAsync();
+    await RoleSeeder.SeeddRolesAndAdminAsync(scope.ServiceProvider, app.Logger);
 }
 
 app.UseHttpsRedirection();
