@@ -1,0 +1,340 @@
+{
+  "info": {
+    "name": "Shop Identity API - Complete Collection",
+    "description": "Colección completa de endpoints de autenticación y administración de usuarios",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://localhost:7049",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "customerToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "testUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "testUserEmail",
+      "value": "testuser@example.com",
+      "type": "string"
+    },
+    {
+      "key": "testUserPassword",
+      "value": "Test123!",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "1. Login Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@shop.com\",\n  \"password\": \"Admin123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Auth/login",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "v1", "Auth", "login" ]
+            }
+          }
+        },
+        {
+          "name": "2. Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"{{testUserEmail}}\",\n  \"password\": \"{{testUserPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Auth/register",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "v1", "Auth", "register" ]
+            }
+          }
+        },
+        {
+          "name": "3. Login Customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{testUserEmail}}\",\n  \"password\": \"{{testUserPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Auth/login",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "v1", "Auth", "login" ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Self-Service",
+      "item": [
+        {
+          "name": "4. Get My Info",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Users/me",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "v1", "Users", "me" ]
+            }
+          }
+        },
+        {
+          "name": "5. Update My Info",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"testuser_updated\",\n  \"email\": \"{{testUserEmail}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Users/me",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "v1", "Users", "me" ]
+            }
+          }
+        },
+        {
+          "name": "6. Delete My Account",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Users/me",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "v1", "Users", "me" ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - User Management",
+      "item": [
+        {
+          "name": "7. Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Admin/Users?pageNumber=1&pageSize=10",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "v1", "Admin", "Users" ],
+              "query": [
+                {
+                  "key": "pageNumber",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "8. Get User By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Admin/Users/{{testUserId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "v1", "Admin", "Users", "{{testUserId}}" ]
+            }
+          }
+        },
+        {
+          "name": "9. Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"admin_updated_user\",\n  \"email\": \"{{testUserEmail}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Admin/Users/{{testUserId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "v1", "Admin", "Users", "{{testUserId}}" ]
+            }
+          }
+        },
+        {
+          "name": "10. Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Admin/Users/{{testUserId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "v1", "Admin", "Users", "{{testUserId}}" ]
+            }
+          }
+        },
+        {
+          "name": "11. Lock User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Admin/Users/{{testUserId}}/lock",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "v1", "Admin", "Users", "{{testUserId}}", "lock" ]
+            }
+          }
+        },
+        {
+          "name": "12. Unlock User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Admin/Users/{{testUserId}}/unlock",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "v1", "Admin", "Users", "{{testUserId}}", "unlock" ]
+            }
+          }
+        },
+        {
+          "name": "14. Assign Role",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roleName\": \"Admin\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Admin/Users/{{testUserId}}/roles",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "v1", "Admin", "Users", "{{testUserId}}", "roles" ]
+            }
+          }
+        },
+        {
+          "name": "16. Get User Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Admin/Users/stats",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "v1", "Admin", "Users", "stats" ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

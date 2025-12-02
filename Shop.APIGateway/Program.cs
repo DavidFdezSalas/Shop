@@ -38,8 +38,6 @@ builder.Services.AddRateLimiter(rateLimiterOptions =>
 });
 
 //JWT
-builder.Services.AddAuthentication();
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {
@@ -58,7 +56,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             };
         });
 
-
+// Políticas de autorización
+builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("AdminOnly", policy =>
+            policy.RequireRole("Admin"));
+    });
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
