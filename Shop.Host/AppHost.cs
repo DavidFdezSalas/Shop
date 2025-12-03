@@ -5,6 +5,9 @@ var postgres = builder.AddPostgres("postgres")
     .WithLifetime(ContainerLifetime.Persistent)
     .WithPgAdmin(pgAdmin => pgAdmin.WithHostPort(5050));
 
+var identitydb = postgres.AddDatabase("identitydb");
+var productsdb = postgres.AddDatabase("productsdb");
+
 var mailServer = builder.AddContainer("maildev", "maildev/maildev:latest")
     .WithLifetime(ContainerLifetime.Persistent)
     .WithEndpoint(port: 1025, targetPort:1025, name: "smtp")
@@ -20,22 +23,28 @@ var rabbitmq = builder.AddRabbitMQ("rabbitmq")
     .WithLifetime(ContainerLifetime.Persistent)
     .WithManagementPlugin();
 
-var postgresdb = postgres.AddDatabase("postgresdb");
-
-var identity1 = builder.AddProject<Projects.Shop_APIIdentity>("shop-apiidentity1")
+var identity = builder.AddProject<Projects.Shop_APIIdentity>("shop-apiidentity")
     .WaitFor(postgres)
-    .WithReference(postgresdb)
+    .WithReference(identitydb)
     .WaitFor(rabbitmq)
     .WithReference(rabbitmq);
 
+var products = builder.AddProject<Projects.Shop_APIProducts>("shop-apiproducts")
+    .WaitFor(postgres)
+    .WithReference(productsdb);
+
 builder.AddProject<Projects.Shop_APIGateway>("shop-apigateway")
-    .WithReference(identity1)
-    .WaitFor(identity1)
+    .WithReference(identity)
+    .WaitFor(identity)
+    .WithReference(products)
+    .WaitFor(products)
     .WithReference(redis)
     .WaitFor(redis);
 
 builder.AddProject<Projects.Shop_Notifications>("shop-notifications")
     .WaitFor(rabbitmq)
     .WithReference(rabbitmq);
+
+
 
 builder.Build().Run();

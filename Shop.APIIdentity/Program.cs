@@ -51,7 +51,7 @@ builder.Services.AddMassTransit(options =>
 });
 
 // Database con Aspire
-builder.AddNpgsqlDbContext<ApplicationDbContext>("postgresdb");
+builder.AddNpgsqlDbContext<ApplicationDbContext>("identitydb");
 
 builder.Services.AddApiVersioning(options =>
 {
