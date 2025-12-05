@@ -1,10 +1,9 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+
 using RedisRateLimiting;
 using Shop.APIGateway.Extensions;
 using Shop.ServiceDefaults;
+using Shop.ServiceDefaults.Authentication;
 using StackExchange.Redis;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,23 +37,7 @@ builder.Services.AddRateLimiter(rateLimiterOptions =>
 });
 
 //JWT
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(options =>
-        {
-            var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-            var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
-
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtSettings["Issuer"],
-                ValidAudience = jwtSettings["Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(key)
-            };
-        });
+builder.Services.AddJwtAuthentication(builder.Configuration);
 
 // Políticas de autorización
 builder.Services.AddAuthorization(options =>

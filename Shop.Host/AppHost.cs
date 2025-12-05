@@ -10,7 +10,7 @@ var productsdb = postgres.AddDatabase("productsdb");
 
 var mailServer = builder.AddContainer("maildev", "maildev/maildev:latest")
     .WithLifetime(ContainerLifetime.Persistent)
-    .WithEndpoint(port: 1025, targetPort:1025, name: "smtp")
+    .WithEndpoint(port: 1025, targetPort: 1025, name: "smtp")
     .WithHttpEndpoint(port: 1080, targetPort: 1080, name: "web");
 
 var redis = builder.AddRedis("redis")
@@ -23,15 +23,25 @@ var rabbitmq = builder.AddRabbitMQ("rabbitmq")
     .WithLifetime(ContainerLifetime.Persistent)
     .WithManagementPlugin();
 
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+
 var identity = builder.AddProject<Projects.Shop_APIIdentity>("shop-apiidentity")
     .WaitFor(postgres)
     .WithReference(identitydb)
     .WaitFor(rabbitmq)
-    .WithReference(rabbitmq);
+    .WithReference(rabbitmq)
+    .WithEnvironment("JwtSettings__Key", jwtSettings["Key"])
+    .WithEnvironment("JwtSettings__Issuer", jwtSettings["Issuer"])
+    .WithEnvironment("JwtSettings__Audience", jwtSettings["Audience"])
+    .WithEnvironment("JwtSettings__ExpirationInMinutes", jwtSettings["ExpirationInMinutes"]);
 
 var products = builder.AddProject<Projects.Shop_APIProducts>("shop-apiproducts")
     .WaitFor(postgres)
-    .WithReference(productsdb);
+    .WithReference(productsdb)
+    .WithEnvironment("JwtSettings__Key", jwtSettings["Key"])
+    .WithEnvironment("JwtSettings__Issuer", jwtSettings["Issuer"])
+    .WithEnvironment("JwtSettings__Audience", jwtSettings["Audience"])
+    .WithEnvironment("JwtSettings__ExpirationInMinutes", jwtSettings["ExpirationInMinutes"]);
 
 builder.AddProject<Projects.Shop_APIGateway>("shop-apigateway")
     .WithReference(identity)
@@ -39,7 +49,11 @@ builder.AddProject<Projects.Shop_APIGateway>("shop-apigateway")
     .WithReference(products)
     .WaitFor(products)
     .WithReference(redis)
-    .WaitFor(redis);
+    .WaitFor(redis)
+    .WithEnvironment("JwtSettings__Key", jwtSettings["Key"])
+    .WithEnvironment("JwtSettings__Issuer", jwtSettings["Issuer"])
+    .WithEnvironment("JwtSettings__Audience", jwtSettings["Audience"])
+    .WithEnvironment("JwtSettings__ExpirationInMinutes", jwtSettings["ExpirationInMinutes"]);
 
 builder.AddProject<Projects.Shop_Notifications>("shop-notifications")
     .WaitFor(rabbitmq)

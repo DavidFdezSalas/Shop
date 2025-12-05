@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Shop.APIProducts.Data;
 using Shop.ServiceDefaults;
+using Shop.ServiceDefaults.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,9 @@ builder.Services.AddApiVersioning(options =>
     options.GroupNameFormat = "'v'V";
     options.SubstituteApiVersionInUrl = true;
 });
+
+//JWT
+builder.Services.AddJwtAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
