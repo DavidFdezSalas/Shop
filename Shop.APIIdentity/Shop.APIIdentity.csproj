@@ -41,7 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Validations\Auth\" />
+    <Folder Include="Validators\Auth\" />
   </ItemGroup>
 
 </Project>

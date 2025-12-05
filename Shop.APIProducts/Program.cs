@@ -1,7 +1,9 @@
 using Asp.Versioning;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Shop.APIProducts.Data;
+using Shop.APIProducts.Services.Categories;
 using Shop.ServiceDefaults;
 using Shop.ServiceDefaults.Authentication;
 
@@ -14,6 +16,10 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.AddNpgsqlDbContext<ProductDbContext>("productsdb");
+
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 builder.Services.AddApiVersioning(options =>
 {

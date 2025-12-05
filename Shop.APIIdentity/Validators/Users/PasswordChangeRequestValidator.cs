@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Shop.APIIdentity.Dto.Users;
 
-namespace Shop.APIIdentity.Validations.Users
+namespace Shop.APIIdentity.Validators.Users
 {
     public class PasswordChangeRequestValidator : AbstractValidator<PasswordChageRequest>
     {

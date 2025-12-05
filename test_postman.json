@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "Shop Identity API - Complete Collection",
-    "description": "Colecci�n completa de endpoints de autenticaci�n y administraci�n de usuarios",
+    "name": "Shop API - Complete Collection",
+    "description": "Colección completa de endpoints de autenticación, administración de usuarios y categorías",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -34,6 +34,11 @@
       "key": "testUserPassword",
       "value": "Test123!",
       "type": "string"
+    },
+    {
+      "key": "testCategoryId",
+      "value": "",
+      "type": "string"
     }
   ],
   "item": [
@@ -42,6 +47,21 @@
       "item": [
         {
           "name": "1. Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"adminToken\", jsonData.token);",
+                  "    console.log(\"Admin token guardado: \" + jsonData.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -56,8 +76,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/Auth/login",
-              "host": [ "{{baseUrl}}" ],
-              "path": [ "api", "v1", "Auth", "login" ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Auth", "login"]
             }
           }
         },
@@ -77,13 +97,28 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/Auth/register",
-              "host": [ "{{baseUrl}}" ],
-              "path": [ "api", "v1", "Auth", "register" ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Auth", "register"]
             }
           }
         },
         {
           "name": "3. Login Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"customerToken\", jsonData.token);",
+                  "    console.log(\"Customer token guardado: \" + jsonData.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -98,8 +133,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/Auth/login",
-              "host": [ "{{baseUrl}}" ],
-              "path": [ "api", "v1", "Auth", "login" ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Auth", "login"]
             }
           }
         }
@@ -120,8 +155,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/Users/me",
-              "host": [ "{{baseUrl}}" ],
-              "path": [ "api", "v1", "Users", "me" ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Users", "me"]
             }
           }
         },
@@ -145,8 +180,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/Users/me",
-              "host": [ "{{baseUrl}}" ],
-              "path": [ "api", "v1", "Users", "me" ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Users", "me"]
             }
           }
         },
@@ -162,8 +197,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/Users/me",
-              "host": [ "{{baseUrl}}" ],
-              "path": [ "api", "v1", "Users", "me" ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Users", "me"]
             }
           }
         }
@@ -184,8 +219,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/Admin/Users?pageNumber=1&pageSize=10",
-              "host": [ "{{baseUrl}}" ],
-              "path": [ "api", "v1", "Admin", "Users" ],
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Admin", "Users"],
               "query": [
                 {
                   "key": "pageNumber",
@@ -211,8 +246,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/Admin/Users/{{testUserId}}",
-              "host": [ "{{baseUrl}}" ],
-              "path": [ "api", "v1", "Admin", "Users", "{{testUserId}}" ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Admin", "Users", "{{testUserId}}"]
             }
           }
         },
@@ -236,8 +271,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/Admin/Users/{{testUserId}}",
-              "host": [ "{{baseUrl}}" ],
-              "path": [ "api", "v1", "Admin", "Users", "{{testUserId}}" ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Admin", "Users", "{{testUserId}}"]
             }
           }
         },
@@ -253,8 +288,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/Admin/Users/{{testUserId}}",
-              "host": [ "{{baseUrl}}" ],
-              "path": [ "api", "v1", "Admin", "Users", "{{testUserId}}" ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Admin", "Users", "{{testUserId}}"]
             }
           }
         },
@@ -270,8 +305,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/Admin/Users/{{testUserId}}/lock",
-              "host": [ "{{baseUrl}}" ],
-              "path": [ "api", "v1", "Admin", "Users", "{{testUserId}}", "lock" ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Admin", "Users", "{{testUserId}}", "lock"]
             }
           }
         },
@@ -287,8 +322,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/Admin/Users/{{testUserId}}/unlock",
-              "host": [ "{{baseUrl}}" ],
-              "path": [ "api", "v1", "Admin", "Users", "{{testUserId}}", "unlock" ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Admin", "Users", "{{testUserId}}", "unlock"]
             }
           }
         },
@@ -312,8 +347,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/Admin/Users/{{testUserId}}/roles",
-              "host": [ "{{baseUrl}}" ],
-              "path": [ "api", "v1", "Admin", "Users", "{{testUserId}}", "roles" ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Admin", "Users", "{{testUserId}}", "roles"]
             }
           }
         },
@@ -329,10 +364,254 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/Admin/Users/stats",
-              "host": [ "{{baseUrl}}" ],
-              "path": [ "api", "v1", "Admin", "Users", "stats" ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Admin", "Users", "stats"]
             }
           }
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "17. Get All Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customerToken}}",
+                "description": "Requiere autenticación (Customer o Admin)"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Categories"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "18. Get Category By ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    console.log(\"Categoría encontrada: \" + jsonData.name);",
+                  "    console.log(\"Productos asociados: \" + jsonData.productCount);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customerToken}}",
+                "description": "Requiere autenticación (Customer o Admin)"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Categories/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Categories", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "19. Create Category (Admin Only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"testCategoryId\", jsonData.id);",
+                  "    console.log(\"Categoría creada con ID: \" + jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "description": "Solo Admin puede crear categorías"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Categoría de Prueba\",\n  \"description\": \"Esta es una categoría creada desde Postman para testing\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Categories"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "20. Create Category - Validation Error (Nombre corto)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"AB\",\n  \"description\": \"Esto fallará porque el nombre es muy corto\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Categories"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "21. Create Category - Validation Error (Nombre duplicado)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Electrónica\",\n  \"description\": \"Esto fallará porque ya existe esa categoría\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Categories"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "22. Update Category (Admin Only)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "description": "Solo Admin puede actualizar categorías"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Categoría Actualizada\",\n  \"description\": \"Descripción modificada desde Postman\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Categories/{{testCategoryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Categories", "{{testCategoryId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "23. Delete Category (Admin Only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "description": "Solo Admin puede eliminar categorías"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Categories/{{testCategoryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Categories", "{{testCategoryId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "24. Delete Category - Has Products Error",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Categories/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Categories", "1"],
+              "description": "Intenta eliminar categoría con ID=1 (Electrónica) que tiene productos asociados. Debería fallar."
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "25. Customer Try Create Category (Forbidden)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customerToken}}",
+                "description": "Customer NO puede crear categorías"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Categoría prohibida\",\n  \"description\": \"Esto fallará con 403 Forbidden\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Categories"]
+            }
+          },
+          "response": []
         }
       ]
     }
