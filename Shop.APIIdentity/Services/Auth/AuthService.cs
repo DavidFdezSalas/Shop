@@ -10,15 +10,13 @@ namespace Shop.APIIdentity.Services.Auth
     public class AuthService : IAuthService
     {
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ITokenService _tokenService;
         private readonly IPublishEndpoint _publishEndpoint;
 
 
-        public AuthService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, ITokenService tokenService, IPublishEndpoint publishEndpoint)
+        public AuthService(UserManager<IdentityUser> userManager, ITokenService tokenService, IPublishEndpoint publishEndpoint)
         {
             _userManager = userManager;
-            _roleManager = roleManager;
             _tokenService = tokenService;
             _publishEndpoint = publishEndpoint;
         }
@@ -81,9 +79,10 @@ namespace Shop.APIIdentity.Services.Auth
             {
                 await _userManager.AddToRoleAsync(user, "Customer");
                 await _publishEndpoint.Publish(new UserCreatedEvent(user.Id, user.Email!));
+                return result.Succeeded;
             }
 
-            return result.Succeeded;
+            return false;
         }
     }
 }
