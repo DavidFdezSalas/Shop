@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Shop API - Complete Collection",
-    "description": "Colección completa de endpoints de autenticación, administración de usuarios y categorías",
+    "description": "Colección completa de endpoints: Authentication, Users, Categories, Products y Orders",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -37,6 +37,16 @@
     },
     {
       "key": "testCategoryId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "testProductId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "testOrderId",
       "value": "",
       "type": "string"
     }
@@ -186,7 +196,32 @@
           }
         },
         {
-          "name": "6. Delete My Account",
+          "name": "6. Change Password",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"{{testUserPassword}}\",\n  \"newPassword\": \"NewTest123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Users/{{testUserId}}/change-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Users", "{{testUserId}}", "change-password"]
+            }
+          }
+        },
+        {
+          "name": "7. Delete My Account",
           "request": {
             "method": "DELETE",
             "header": [
@@ -208,7 +243,7 @@
       "name": "Admin - User Management",
       "item": [
         {
-          "name": "7. Get All Users",
+          "name": "8. Get All Users",
           "request": {
             "method": "GET",
             "header": [
@@ -235,7 +270,7 @@
           }
         },
         {
-          "name": "8. Get User By ID",
+          "name": "9. Get User By ID",
           "request": {
             "method": "GET",
             "header": [
@@ -252,7 +287,7 @@
           }
         },
         {
-          "name": "9. Update User",
+          "name": "10. Update User",
           "request": {
             "method": "PUT",
             "header": [
@@ -277,7 +312,7 @@
           }
         },
         {
-          "name": "10. Delete User",
+          "name": "11. Delete User",
           "request": {
             "method": "DELETE",
             "header": [
@@ -294,7 +329,7 @@
           }
         },
         {
-          "name": "11. Lock User",
+          "name": "12. Lock User",
           "request": {
             "method": "PATCH",
             "header": [
@@ -311,7 +346,7 @@
           }
         },
         {
-          "name": "12. Unlock User",
+          "name": "13. Unlock User",
           "request": {
             "method": "PATCH",
             "header": [
@@ -353,7 +388,7 @@
           }
         },
         {
-          "name": "16. Get User Stats",
+          "name": "15. Get User Stats",
           "request": {
             "method": "GET",
             "header": [
@@ -375,14 +410,13 @@
       "name": "Categories",
       "item": [
         {
-          "name": "17. Get All Categories",
+          "name": "16. Get All Categories",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{customerToken}}",
-                "description": "Requiere autenticación (Customer o Admin)"
+                "value": "Bearer {{customerToken}}"
               }
             ],
             "url": {
@@ -390,11 +424,10 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "Categories"]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "18. Get Category By ID",
+          "name": "17. Get Category By ID",
           "event": [
             {
               "listen": "test",
@@ -415,8 +448,7 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{customerToken}}",
-                "description": "Requiere autenticación (Customer o Admin)"
+                "value": "Bearer {{customerToken}}"
               }
             ],
             "url": {
@@ -424,11 +456,10 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "Categories", "1"]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "19. Create Category (Admin Only)",
+          "name": "18. Create Category (Admin Only)",
           "event": [
             {
               "listen": "test",
@@ -449,8 +480,7 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{adminToken}}",
-                "description": "Solo Admin puede crear categorías"
+                "value": "Bearer {{adminToken}}"
               },
               {
                 "key": "Content-Type",
@@ -466,70 +496,16 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "Categories"]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "20. Create Category - Validation Error (Nombre corto)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{adminToken}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"AB\",\n  \"description\": \"Esto fallará porque el nombre es muy corto\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/Categories",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "Categories"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "21. Create Category - Validation Error (Nombre duplicado)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{adminToken}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Electrónica\",\n  \"description\": \"Esto fallará porque ya existe esa categoría\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/Categories",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "Categories"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "22. Update Category (Admin Only)",
+          "name": "19. Update Category (Admin Only)",
           "request": {
             "method": "PUT",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{adminToken}}",
-                "description": "Solo Admin puede actualizar categorías"
+                "value": "Bearer {{adminToken}}"
               },
               {
                 "key": "Content-Type",
@@ -545,30 +521,10 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "Categories", "{{testCategoryId}}"]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "23. Delete Category (Admin Only)",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{adminToken}}",
-                "description": "Solo Admin puede eliminar categorías"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/Categories/{{testCategoryId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "Categories", "{{testCategoryId}}"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "24. Delete Category - Has Products Error",
+          "name": "20. Delete Category (Admin Only)",
           "request": {
             "method": "DELETE",
             "header": [
@@ -578,23 +534,107 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Categories/1",
+              "raw": "{{baseUrl}}/api/v1/Categories/{{testCategoryId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "Categories", "1"],
-              "description": "Intenta eliminar categoría con ID=1 (Electrónica) que tiene productos asociados. Debería fallar."
+              "path": ["api", "v1", "Categories", "{{testCategoryId}}"]
             }
-          },
-          "response": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "21. Get All Products",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Products",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Products"]
+            }
+          }
         },
         {
-          "name": "25. Customer Try Create Category (Forbidden)",
+          "name": "22. Get Product By ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    console.log(\"Producto encontrado: \" + jsonData.name);",
+                  "    console.log(\"Precio: \" + jsonData.price);",
+                  "    console.log(\"Stock: \" + jsonData.stock);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Products/{{testProductId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Products", "{{testProductId}}"]
+            }
+          }
+        },
+        {
+          "name": "23. Get Products By Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Products/category/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Products", "category", "1"]
+            }
+          }
+        },
+        {
+          "name": "24. Create Product (Admin Only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"testProductId\", jsonData.id);",
+                  "    console.log(\"Producto creado con ID: \" + jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{customerToken}}",
-                "description": "Customer NO puede crear categorías"
+                "value": "Bearer {{adminToken}}"
               },
               {
                 "key": "Content-Type",
@@ -603,15 +643,196 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Categoría prohibida\",\n  \"description\": \"Esto fallará con 403 Forbidden\"\n}"
+              "raw": "{\n  \"name\": \"Producto de Prueba\",\n  \"description\": \"Este es un producto creado desde Postman\",\n  \"price\": 99.99,\n  \"stock\": 50,\n  \"categoriesId\": 1,\n  \"imageUrl\": \"/images/productos/test.jpg\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Categories",
+              "raw": "{{baseUrl}}/api/v1/Products",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "Categories"]
+              "path": ["api", "v1", "Products"]
             }
-          },
-          "response": []
+          }
+        },
+        {
+          "name": "25. Update Product (Admin Only)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Producto Actualizado\",\n  \"description\": \"Descripción actualizada desde Postman\",\n  \"price\": 149.99,\n  \"stock\": 75,\n  \"categoriesId\": 1,\n  \"imageUrl\": \"/images/productos/test-updated.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Products/{{testProductId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Products", "{{testProductId}}"]
+            }
+          }
+        },
+        {
+          "name": "26. Delete Product (Admin Only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Products/{{testProductId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Products", "{{testProductId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "27. Create Order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"testOrderId\", jsonData.id);",
+                  "    console.log(\"Orden creada con ID: \" + jsonData.id);",
+                  "    console.log(\"Total: \" + jsonData.totalAmount);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"shippingAddress\": \"Calle Falsa 123, Madrid, España\",\n  \"items\": [\n    {\n      \"productId\": \"{{testProductId}}\",\n      \"quantity\": 2\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Orders"]
+            }
+          }
+        },
+        {
+          "name": "28. Get Order By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Orders/{{testOrderId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Orders", "{{testOrderId}}"]
+            }
+          }
+        },
+        {
+          "name": "29. Get My Orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Orders/my-orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Orders", "my-orders"]
+            }
+          }
+        },
+        {
+          "name": "30. Get All Orders (Admin Only)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Orders"]
+            }
+          }
+        },
+        {
+          "name": "31. Update Order Status (Admin Only)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": 1\n}",
+              "description": "Status: 0=Pending, 1=Processing, 2=Shipped, 3=Delivered, 4=Cancelled"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Orders/{{testOrderId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Orders", "{{testOrderId}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "32. Cancel Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Orders/{{testOrderId}}/cancel",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "Orders", "{{testOrderId}}", "cancel"]
+            }
+          }
         }
       ]
     }

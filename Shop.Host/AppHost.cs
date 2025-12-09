@@ -7,6 +7,7 @@ var postgres = builder.AddPostgres("postgres")
 
 var identitydb = postgres.AddDatabase("identitydb");
 var productsdb = postgres.AddDatabase("productsdb");
+var ordersdb = postgres.AddDatabase("ordersdb");
 
 var mailServer = builder.AddContainer("maildev", "maildev/maildev:latest")
     .WithLifetime(ContainerLifetime.Persistent)
@@ -43,11 +44,23 @@ var products = builder.AddProject<Projects.Shop_APIProducts>("shop-apiproducts")
     .WithEnvironment("JwtSettings__Audience", jwtSettings["Audience"])
     .WithEnvironment("JwtSettings__ExpirationInMinutes", jwtSettings["ExpirationInMinutes"]);
 
+var orders = builder.AddProject<Projects.Shop_APIOrders>("shop-apiorders")
+    .WaitFor(postgres)
+    .WithReference(ordersdb)
+    .WaitFor(rabbitmq)
+    .WithReference(rabbitmq)
+    .WithEnvironment("JwtSettings__Key", jwtSettings["Key"])
+    .WithEnvironment("JwtSettings__Issuer", jwtSettings["Issuer"])
+    .WithEnvironment("JwtSettings__Audience", jwtSettings["Audience"])
+    .WithEnvironment("JwtSettings__ExpirationInMinutes", jwtSettings["ExpirationInMinutes"]);
+
 builder.AddProject<Projects.Shop_APIGateway>("shop-apigateway")
     .WithReference(identity)
     .WaitFor(identity)
     .WithReference(products)
     .WaitFor(products)
+    .WithReference(orders)
+    .WaitFor(orders)
     .WithReference(redis)
     .WaitFor(redis)
     .WithEnvironment("JwtSettings__Key", jwtSettings["Key"])
@@ -58,7 +71,5 @@ builder.AddProject<Projects.Shop_APIGateway>("shop-apigateway")
 builder.AddProject<Projects.Shop_Notifications>("shop-notifications")
     .WaitFor(rabbitmq)
     .WithReference(rabbitmq);
-
-
 
 builder.Build().Run();

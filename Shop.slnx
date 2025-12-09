@@ -7,6 +7,7 @@
   <Project Path="Shop.APIGateway/Shop.APIGateway.csproj" />
   <Project Path="Shop.APIIdentity.Test/Shop.APIIdentity.Test.csproj" Id="7b4d1169-22af-4fa3-a99a-b6926cdc17bd" />
   <Project Path="Shop.APIIdentity/Shop.APIIdentity.csproj" />
+  <Project Path="Shop.APIOrders/Shop.APIOrders.csproj" />
   <Project Path="Shop.APIProducts/Shop.APIProducts.csproj" />
   <Project Path="Shop.Host/Shop.Host.csproj" />
   <Project Path="Shop.Notifications/Shop.Notifications.csproj" />

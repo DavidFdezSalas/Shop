@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Shop.APIGateway\Shop.APIGateway.csproj" />
     <ProjectReference Include="..\Shop.APIIdentity\Shop.APIIdentity.csproj" />
+    <ProjectReference Include="..\Shop.APIOrders\Shop.APIOrders.csproj" />
     <ProjectReference Include="..\Shop.APIProducts\Shop.APIProducts.csproj" />
     <ProjectReference Include="..\Shop.Notifications\Shop.Notifications.csproj" />
   </ItemGroup>
