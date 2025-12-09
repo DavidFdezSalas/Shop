@@ -6,6 +6,7 @@ using Shop.APIProducts.Data;
 using Shop.APIProducts.Services.Categories;
 using Shop.ServiceDefaults;
 using Shop.ServiceDefaults.Authentication;
+using Shop.APIProducts.Services.Products;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ builder.Services.AddOpenApi();
 builder.AddNpgsqlDbContext<ProductDbContext>("productsdb");
 
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
