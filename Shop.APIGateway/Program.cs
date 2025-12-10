@@ -1,4 +1,3 @@
-
 using RedisRateLimiting;
 using Shop.APIGateway.Extensions;
 using Shop.ServiceDefaults;
@@ -11,11 +10,15 @@ builder.AddServiceDefaults();
 
 builder.Configuration.AddUserSecrets(typeof(Program).Assembly, true);
 
-// Add services to the container.
+// Registrar AUTH antes de YARP para que las políticas existan cuando YARP lea la configuración
+// JWT
+builder.Services.AddJwtAuthentication(builder.Configuration);
 
-builder.Services.AddControllers();
-
+// Ahora registrar YARP
 builder.Services.AddYarpReverseProxy(builder.Configuration);
+
+// Add services to the container.
+builder.Services.AddControllers();
 
 builder.Services.AddRateLimiter(rateLimiterOptions =>
 {
@@ -25,35 +28,22 @@ builder.Services.AddRateLimiter(rateLimiterOptions =>
         var ipAddress = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 
         return RedisRateLimitPartition.GetFixedWindowRateLimiter(
-    $"ip:{ipAddress}",
-    _ => new RedisFixedWindowRateLimiterOptions
-    {
-        ConnectionMultiplexerFactory = () => redis,
-        PermitLimit = 250,
-        Window = TimeSpan.FromMinutes(1)
-
-    });
+            $"ip:{ipAddress}",
+            _ => new RedisFixedWindowRateLimiterOptions
+            {
+                ConnectionMultiplexerFactory = () => redis,
+                PermitLimit = 250,
+                Window = TimeSpan.FromMinutes(1)
+            });
     });
 });
 
-//JWT
-builder.Services.AddJwtAuthentication(builder.Configuration);
-
-// Políticas de autorización
-builder.Services.AddAuthorization(options =>
-    {
-        options.AddPolicy("AdminOnly", policy =>
-            policy.RequireRole("Admin"));
-    });
-
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.AddRedisClient("redis");
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();

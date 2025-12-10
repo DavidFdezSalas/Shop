@@ -28,6 +28,8 @@ builder.Services.AddHttpClient("ProductsApi", client =>
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 });
 
+builder.Services.AddHttpContextAccessor();
+
 // ===== SERVICES =====
 builder.Services.AddScoped<IOrderService, OrderService>();
 

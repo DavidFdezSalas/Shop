@@ -51,7 +51,13 @@ namespace Shop.ServiceDefaults.Authentication
                 };
             });
 
-            services.AddAuthorization();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy =>
+                {
+                    policy.RequireRole("Admin");
+                });
+            });
 
             return services;
         }

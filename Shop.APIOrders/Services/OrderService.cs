@@ -4,6 +4,7 @@ using Shop.APIOrders.Data;
 using Shop.APIOrders.Dto;
 using Shop.APIOrders.Models;
 using System.Net.Http.Json;
+using System.Net.Http.Headers;
 
 namespace Shop.APIOrders.Services
 {
@@ -13,17 +14,20 @@ namespace Shop.APIOrders.Services
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IPublishEndpoint _publishEndpoint;
         private readonly ILogger<OrderService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public OrderService(
             OrderDbContext context,
             IHttpClientFactory httpClientFactory,
             IPublishEndpoint publishEndpoint,
-            ILogger<OrderService> logger)
+            ILogger<OrderService> logger,
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _httpClientFactory = httpClientFactory;
             _publishEndpoint = publishEndpoint;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<OrderResponse> CreateOrderAsync(string userId, CreateOrderRequest request)
@@ -35,6 +39,21 @@ namespace Shop.APIOrders.Services
             }
 
             var httpClient = _httpClientFactory.CreateClient("ProductsApi");
+
+            var authHeader = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(authHeader))
+            {
+                if (authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                {
+                    var token = authHeader.Substring("Bearer ".Length).Trim();
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
+                else
+                {
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authHeader);
+                }
+            }
+
             var orderItems = new List<OrderItem>();
             decimal totalAmount = 0;
 
