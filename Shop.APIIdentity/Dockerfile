@@ -12,12 +12,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-# Copiar los archivos de proyecto necesarios para que "dotnet restore" pueda resolver ProjectReference
-COPY ["Shop.APIIdentity/Shop.APIIdentity.csproj", "Shop.APIIdentity/"]
-COPY ["Shop.ServiceDefaults/Shop.ServiceDefaults.csproj", "Shop.ServiceDefaults/"]
-COPY ["Shop.Shared/Shop.Shared.csproj", "Shop.Shared/"]
-RUN dotnet restore "Shop.APIIdentity/Shop.APIIdentity.csproj"
+# Copiar todo el repositorio primero para asegurarnos de que NuGet.Config y otros archivos estén disponibles
 COPY . .
+# Restaurar paquetes del proyecto específico
+RUN dotnet restore "Shop.APIIdentity/Shop.APIIdentity.csproj"
 WORKDIR "/src/Shop.APIIdentity"
 RUN dotnet build "./Shop.APIIdentity.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
