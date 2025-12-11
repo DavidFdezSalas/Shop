@@ -17,6 +17,8 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 // Ahora registrar YARP
 builder.Services.AddYarpReverseProxy(builder.Configuration);
 
+builder.Services.AddGatewayCors();
+
 // Add services to the container.
 builder.Services.AddControllers();
 
