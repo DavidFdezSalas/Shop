@@ -54,7 +54,7 @@ var orders = builder.AddProject<Projects.Shop_APIOrders>("shop-apiorders")
     .WithEnvironment("JwtSettings__Audience", jwtSettings["Audience"])
     .WithEnvironment("JwtSettings__ExpirationInMinutes", jwtSettings["ExpirationInMinutes"]);
 
-builder.AddProject<Projects.Shop_APIGateway>("shop-apigateway")
+var gateway = builder.AddProject<Projects.Shop_APIGateway>("shop-apigateway")
     .WithReference(identity)
     .WaitFor(identity)
     .WithReference(products)
@@ -67,6 +67,8 @@ builder.AddProject<Projects.Shop_APIGateway>("shop-apigateway")
     .WithEnvironment("JwtSettings__Issuer", jwtSettings["Issuer"])
     .WithEnvironment("JwtSettings__Audience", jwtSettings["Audience"])
     .WithEnvironment("JwtSettings__ExpirationInMinutes", jwtSettings["ExpirationInMinutes"]);
+
+var web = builder.AddNpmApp("shop-web", "../Shop.Web", "dev").WithReference(gateway).WaitFor(gateway);
 
 builder.AddProject<Projects.Shop_Notifications>("shop-notifications")
     .WaitFor(rabbitmq)
