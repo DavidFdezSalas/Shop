@@ -5,6 +5,7 @@ Se usaron las siguientes herramientas para generar este proyecto:
 
 Los pasos siguientes se usaron para generar este proyecto:
 - Cree un proyecto de React con create-vite: `npm init --yes vite@latest shop.web -- --template=react-ts`.
+- Actualizando `vite.config.ts` con puerto.
 - Crear archivo de proyecto (`shop.web.esproj`).
 - Crear `launch.json` para habilitar la depuración.
 - Agregue el proyecto a la solución.
