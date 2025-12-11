@@ -2,9 +2,7 @@ name: Build and Push Shop.APIIdentity Docker Image
 
 on:
   push:
-    branches:
-      - master
-      - main
+    branches: [ master, main ]
     paths:
       - 'Shop.APIIdentity/**'
       - 'Shop.ServiceDefaults/**'
@@ -13,9 +11,7 @@ on:
       - 'docker-compose.integration.yml'
       - 'postman/**'
   pull_request:
-    branches:
-      - master
-      - main
+    branches: [ master, main ]
     paths:
       - 'Shop.APIIdentity/**'
       - 'Shop.ServiceDefaults/**'
@@ -40,20 +36,73 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Prepare image name (lowercase owner)
+      - name: Prepare lowercase owner
         id: vars
         run: |
-          owner_lower=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')
+          owner_lower=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           echo "owner=${owner_lower}" >> $GITHUB_OUTPUT
           echo "image=${owner_lower}/shop-apiidentity" >> $GITHUB_OUTPUT
 
-      - name: Build Docker image
+      - name: Build Docker image (local)
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Shop.APIIdentity/Dockerfile
           push: false
           load: true
-          tags: ${{ env.REGISTRY }}/${{ steps.vars.outputs.image }}:test
+          tags: identity-api:test
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Save Docker image artifact (packages)
+        run: |
+          docker save identity-api:test -o /tmp/shop-apiidentity-image.tar
+
+      - name: Upload Docker image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: /tmp/shop-apiidentity-image.tar
+          retention-days: 7
+
+  push:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name != 'pull_request'
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: packages
+          path: /tmp
+
+      - name: Load Docker image
+        run: docker load -i /tmp/shop-apiidentity-image.tar
+
+      - name: Prepare lowercase owner
+        id: vars2
+        run: |
+          owner_lower=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "owner=${owner_lower}" >> $GITHUB_OUTPUT
+          echo "image=${owner_lower}/shop-apiidentity" >> $GITHUB_OUTPUT
+
+      - name: Tag image for registry
+        run: |
+          docker tag identity-api:test ${{ env.REGISTRY }}/${{ steps.vars2.outputs.image }}:latest
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image to registry
+        run: docker push ${{ env.REGISTRY }}/${{ steps.vars2.outputs.image }}:latest
