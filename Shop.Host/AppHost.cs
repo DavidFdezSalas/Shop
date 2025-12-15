@@ -72,6 +72,8 @@ var web = builder.AddNpmApp("shop-web", "../Shop.Web", "dev").WithReference(gate
 
 builder.AddProject<Projects.Shop_Notifications>("shop-notifications")
     .WaitFor(rabbitmq)
-    .WithReference(rabbitmq);
+    .WithReference(rabbitmq)
+    .WithEnvironment("EmailSmtpHost", mailServer.GetEndpoint("smtp").Property(EndpointProperty.Host))
+    .WithEnvironment("EmailSmtpPort", mailServer.GetEndpoint("smtp").Property(EndpointProperty.Port));
 
 builder.Build().Run();
