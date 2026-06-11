@@ -1,65 +1,73 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useContext, useState } from 'react'
+import api from '@/api/client'
+import { AuthContext } from '@/contexts/AuthContext'
 
-interface LoginForm {
-    email: string;
-    password: string;
+type Props = {
+  onAuthSuccess: (token: string) => void
+  onGotoRegister: () => void
 }
 
-const Login: React.FC = () => {
-    const [form, setForm] = useState<LoginForm>({ email: '', password: '' });
-    const [error, setError] = useState<string | null>(null);
-    const navigate = useNavigate();
+export default function Login({ onAuthSuccess, onGotoRegister }: Props) {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
+  const auth = useContext(AuthContext)
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError(null);
+  const handleSubmit = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const data = await api.auth.login(email, password)
+      if (data && data.success) {
+        await auth.login(data.token)
+        if (onAuthSuccess) onAuthSuccess(data.token)
+      } else {
+        setError(data?.errorMessage || 'Invalid credentials')
+      }
+    } catch (e: any) {
+      setError(e?.data?.message || e?.data || e?.message || 'Network error')
+    } finally {
+      setLoading(false)
+    }
+  }
 
-        try {
-            const response = await fetch('https://localhost:7049/api/v1/Auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: form.email,
-                    password: form.password
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Credenciales incorrectas');
-            }
-
-            const data = await response.json();
-            localStorage.setItem('token', data.token);
-            navigate('/home');
-        } catch (err: any) {
-            setError(err.message || 'Error de autenticación');
-        }
-    };
-
-    return (
-        <div>
-            <h1>Iniciar sesión</h1>
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Email:
-                    <input type="email" name="email" value={form.email} onChange={handleChange} required />
-                </label>
-                <br />
-                <label>
-                    Contraseña:
-                    <input type="password" name="password" value={form.password} onChange={handleChange} required />
-                </label>
-                <br />
-                <button type="submit">Entrar</button>
-            </form>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-        </div>
-    );
-};
-
-export default Login;
+  return (
+    <div className="bg-card p-6 rounded-lg shadow-md">
+      <h2 className="text-2xl mb-4">Login</h2>
+      {error && <div className="mb-4 text-destructive">{error}</div>}
+      <label className="block mb-2">
+        <span className="text-sm">Email</span>
+        <input
+          className="mt-1 block w-full rounded-md border border-border bg-input p-2"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="email@example.com"
+        />
+      </label>
+      <label className="block mb-4">
+        <span className="text-sm">Password</span>
+        <input
+          type="password"
+          className="mt-1 block w-full rounded-md border border-border bg-input p-2"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="password"
+        />
+      </label>
+      <div className="flex items-center justify-between">
+        <button
+          className="bg-primary text-primary-foreground px-4 py-2 rounded-md disabled:opacity-60"
+          onClick={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? 'Signing...' : 'Sign in'}
+        </button>
+        <button className="text-sm underline" onClick={onGotoRegister}>
+          Create account
+        </button>
+      </div>
+    </div>
+  )
+}
